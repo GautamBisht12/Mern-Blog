@@ -1,26 +1,15 @@
 import express from "express";
-import mongoose from "mongoose";
 import dotenv from "dotenv";
 import userRoutes from "./routes/user.route.js";
 import authRoutes from "./routes/auth.route.js";
-
-dotenv.config({ path: ".env" });
-
-mongoose
-  .connect(process.env.MONGODB_URI)
-  .then(() => {
-    console.log("Connected to MongoDB");
-  })
-  .catch((error) => {
-    console.error("Error connecting to MongoDB:", error);
-  });
+import connectDb from "./db/connect.js";
 
 const app = express();
-app.use(express.json());
 
-app.listen(3000, () => {
-  console.log(`Server is running on port 3000`);
-});
+dotenv.config();
+// dotenv.config();
+
+app.use(express.json());
 
 app.use("/api/user", userRoutes);
 app.use("/api/auth", authRoutes);
@@ -34,3 +23,14 @@ app.use((err, req, res, next) => {
     message,
   });
 });
+connectDb()
+  .then(() => {
+    app.listen(3000, () => {
+      console.log(`Server is running on port 3000`);
+    });
+  })
+  .then(() => {
+    app.get("/", (req, res) => {
+      res.send("server is ready at port 3000");
+    });
+  });

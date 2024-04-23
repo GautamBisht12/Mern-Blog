@@ -1,3 +1,4 @@
+/* eslint-disable react/no-unescaped-entities */
 import { Button, Navbar, TextInput } from "flowbite-react";
 import { AiOutlineSearch } from "react-icons/ai";
 import { FaMoon } from "react-icons/fa";
@@ -40,21 +41,21 @@ const Header = () => {
           <Navbar.Toggle />
         </div>
         <Navbar.Collapse>
-          <Navbar.Link active={path === "/"} as={"div"}>
-            <Link to="/" className="sm:text-[20px] font-bold">
+          <Link to="/" className="sm:text-[20px] font-bold">
+            <Navbar.Link active={path === "/"} as={"div"}>
               Home
-            </Link>
-          </Navbar.Link>
-          <Navbar.Link active={path === "/about"} as={"div"}>
-            <Link to="/about" className="sm:text-[20px] font-bold">
+            </Navbar.Link>
+          </Link>
+          <Link to="/about" className="sm:text-[20px] font-bold">
+            <Navbar.Link active={path === "/about"} as={"div"}>
               About
-            </Link>
-          </Navbar.Link>
-          <Navbar.Link active={path === "/projects"} as={"div"}>
-            <Link to="/projects" className="sm:text-[20px] font-bold">
+            </Navbar.Link>
+          </Link>
+          <Link to="/projects" className="sm:text-[20px] font-bold">
+            <Navbar.Link active={path === "/projects"} as={"div"}>
               Projects
-            </Link>
-          </Navbar.Link>
+            </Navbar.Link>
+          </Link>
         </Navbar.Collapse>
       </Navbar>
     </>

@@ -1,10 +1,10 @@
-import React from "react";
-
 const Signin = () => {
   return (
-    <div>
-      <h1>Sign in</h1>
-    </div>
+    <>
+      <span className="px-2 rounded-lg py-1 bg-gradient-to-r from-[#6f34a7] to-[#FF6978] text-white">
+        BishtG's
+      </span>
+    </>
   );
 };
 
