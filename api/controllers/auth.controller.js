@@ -1,57 +1,87 @@
 import User from "../models/user.model.js";
-import bcryptjs from "bcryptjs";
+// import bcryptjs from "bcryptjs";
 import { errorHandler } from "../utils/error.js";
 
 export const signup = async (req, res, next) => {
   try {
     const { username, email, password } = req.body;
 
-    if (
-      !username ||
-      !email ||
-      !password ||
-      username === "" ||
-      email === "" ||
-      password === ""
-    ) {
-      next(errorHandler(400, "All fields are required"));
+    if (!username || !email || !password) {
+      return res
+        .status(500)
+        .json({ message: "All fields are required", success: false });
+      // next(errorHandler(400, "All fields are required"));
     }
 
     const isUserAlreadyExist = await User.findOne({
       $or: [{ username }, { email }],
     });
+
     if (isUserAlreadyExist) {
-      next(
-        errorHandler(400, "User with same username and email already exist")
-      );
+      return res.status(500).json({
+        message: "User with same username or email already exist",
+        success: false,
+      });
+
+      // next(errorHandler(400, "User with same username or email already exist"));
     }
 
-    if (password.length < 8) {
-      next(errorHandler(400, "Password must be 8 characters"));
-    }
     const user = await User.create({
       username,
       email,
       password,
     });
 
-    const newUser = await User.findById(user?._id);
+    const newUser = await User.findById(user?._id).select("-password");
     if (!newUser) {
-      next(errorHandler(500, "Something went wrong while registering user"));
+      res
+        .status(500)
+        .json({ message: "Something went wrong while registering user" });
+      // next(errorHandler(500, "Something went wrong while registering user"));
     }
+
+    return res.json({
+      message: "User Sign up Successfully",
+      newUser,
+      success: true,
+    });
   } catch (error) {
     console.log("Error in signup controller", error.message);
-    next(errorHandler(500, error.message));
+    res.status(500).json({ message: error.message, success: false });
   }
 };
 
-export const login = async (req, res, next) => {
-  const { password, email } = req.body;
+export const signin = async (req, res, next) => {
+  try {
+    const { password, email } = req.body;
 
-  if (!password || !email) {
-    next(errorHandler(400, "All fields are required"));
-  } 
+    if (!password || !email) {
+      next(errorHandler(400, "All fields are required"));
+    }
 
-  const userExist = await  User.findOne({$and:[{username} , {email}]})
+    const user = await User.findOne({ email });
+    if (!user) {
+      console.log("Invalid credentials");
+      res.status(400).json({ message: "Invalid Credentials" });
+    }
 
+    const checkPassword = await user.isPasswordCorrect(password);
+
+    if (!checkPassword) {
+      console.log("Password is incorrect");
+      return res
+        .status(500)
+        .json({ message: "Password or Email is incorrect", success: false });
+      // return next(errorHandler(500, error.message));
+    }
+
+    return res.json({
+      message: "User Login Successfully",
+
+      success: true,
+    });
+  } catch (error) {
+    console.log("Error in login controller", error.message);
+    next(errorHandler(500, error.message));
+  }
 };
