@@ -1,3 +1,4 @@
+/* eslint-disable react/no-unescaped-entities */
 import { Link } from "react-router-dom";
 import { Alert, Button, Label, TextInput } from "flowbite-react";
 import { useState } from "react";
@@ -69,7 +70,7 @@ const Signin = () => {
 
   return (
     <>
-      <div className="min-h-screen mt-20">
+      <div className="min-h-[75vh] mt-10 py-10 md:mt-20">
         <div className="flex  p-3 max-w-3xl mx-auto flex-col md:flex-row  md:items-center gap-5">
           {/* left */}
           <div className="flex-1 px-2">

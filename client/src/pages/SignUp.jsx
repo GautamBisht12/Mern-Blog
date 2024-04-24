@@ -1,3 +1,4 @@
+/* eslint-disable react/no-unescaped-entities */
 import { Link, useNavigate } from "react-router-dom";
 import { Alert, Button, Label, Spinner, TextInput } from "flowbite-react";
 import { useState } from "react";
@@ -64,10 +65,10 @@ const SignUp = () => {
   };
 
   return (
-    <div className="min-h-screen mt-20">
-      <div className="flex  p-3 max-w-3xl mx-auto flex-col md:flex-row  md:items-center gap-5">
+    <div className="min-h-[75vh]  mt-10 py-10 md:mt-20 ">
+      <div className="flex  p-2 max-w-3xl mx-auto flex-col md:flex-row  md:items-center gap-5">
         {/* left */}
-        <div className="flex-1 px-2">
+        <div className="flex-1 px-2 ">
           <Link
             to="/"
             className="text-4xl sm:text-xl font-bold dark:text-white "
@@ -77,9 +78,11 @@ const SignUp = () => {
             </span>
             <span className="text-[28px] ml-2">Blog</span>
           </Link>
-          <p className="mt-8 text-base">
-            This is a MERN Stack Blog project . you can sign up with your email
-            and password or with google
+          <p className="mt-10 text-base">
+            Hii ✋ I'm{" "}
+            <span className="text-[20px] font-semibold">Gautam Bisht.</span>{" "}
+            <br /> This is my MERN Stack Blog project . you can sign up with
+            your email and password or with google
           </p>
         </div>
         {/* right */}
