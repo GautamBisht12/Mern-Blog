@@ -1,9 +1,15 @@
 /* eslint-disable react/no-unescaped-entities */
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Alert, Button, Label, TextInput } from "flowbite-react";
 import { useState } from "react";
 import axios from "axios";
 import toast from "react-hot-toast";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  signInSuccess,
+  signInFailure,
+  signInStart,
+} from "../redux/user/userSlice";
 
 const Signin = () => {
   const user = {
@@ -12,9 +18,11 @@ const Signin = () => {
   };
 
   const [formData, setFormData] = useState(user);
-  const [errorMessage, setErrorMessage] = useState(null);
-  const [successMessage, setSuccessMessage] = useState(null);
-  const [loading, setLoading] = useState(null);
+  const { loading, error: errorMessage } = useSelector((state) => state.user);
+
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
     console.log(formData);
@@ -23,28 +31,29 @@ const Signin = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!formData.password || !formData.email) {
-      return setErrorMessage("All fields are required");
+      return dispatch(signInFailure("All fields are required"));
     }
     console.log(formData);
     try {
       // set states value
-      setLoading(true);
-      setErrorMessage(null);
-      setSuccessMessage(null);
+      dispatch(signInStart());
 
       // make api call
       const response = await axios.post("/api/auth/signin", formData);
 
       if (!response.data.success) {
-        throw new Error(response.data.message || "API request failed");
+        // throw new Error(response.data.message || "API request failed");
+        console.log(response.data.message);
+        dispatch(signInFailure(response.data.message));
       }
-
       console.log("Success:", response.data);
-      setFormData({ email: "", password: "" });
-      setSuccessMessage(response.data.message);
-      setLoading(false);
+
+      console.log(response);
+      console.log(response.data);
+
       if (response.data.success) {
-        toast.success(response.data.message, {
+        dispatch(signInSuccess(response.data.user));
+        toast.success("Login Successfull", {
           duration: 4000, // milliseconds
           position: "top-right",
           style: {
@@ -55,16 +64,15 @@ const Signin = () => {
             background: "lightgreen",
           },
         });
-        // navigate("/sign-in");
+        setFormData({ email: "", password: "" });
+        navigate("/");
       }
 
       console.log(formData, "after clearing");
     } catch (error) {
       console.log(error);
-      setErrorMessage(error?.response?.data?.message);
-      setLoading(false);
+      dispatch(signInFailure(error.response?.data.message));
       setFormData({ email: "", password: "" });
-      console.error("Error:", error.message || "An error occurred"); // Log the error for debugging
     }
   };
 
@@ -140,11 +148,6 @@ const Signin = () => {
             {errorMessage && (
               <Alert className="mt-5 font-semibold" color="failure">
                 {errorMessage}
-              </Alert>
-            )}
-            {successMessage && (
-              <Alert className="mt-5 font-semibold" color="success">
-                {successMessage}
               </Alert>
             )}
           </div>

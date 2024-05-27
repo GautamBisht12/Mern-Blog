@@ -1,6 +1,7 @@
 import User from "../models/user.model.js";
 // import bcryptjs from "bcryptjs";
 import { errorHandler } from "../utils/error.js";
+import jwt from "jsonwebtoken";
 
 export const signup = async (req, res, next) => {
   try {
@@ -56,13 +57,13 @@ export const signin = async (req, res, next) => {
     const { password, email } = req.body;
 
     if (!password || !email) {
-      next(errorHandler(400, "All fields are required"));
+      return next(errorHandler(400, "All fields are required"));
     }
-
     const user = await User.findOne({ email });
+
     if (!user) {
       console.log("Invalid credentials");
-      res.status(400).json({ message: "Invalid Credentials" });
+      return res.status(404).json({ message: "Invalid Credentials" });
     }
 
     const checkPassword = await user.isPasswordCorrect(password);
@@ -72,14 +73,23 @@ export const signin = async (req, res, next) => {
       return res
         .status(500)
         .json({ message: "Password or Email is incorrect", success: false });
-      // return next(errorHandler(500, error.message));
     }
 
-    return res.json({
-      message: "User Login Successfully",
+    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET);
 
-      success: true,
-    });
+    // to remove password from user
+    const { password: pass, ...rest } = user._doc;
+
+    return res
+      .status(200)
+      .cookie("access_token", token, {
+        httpOnly: true,
+      })
+      .json({
+        message: "User Login Successfully",
+        success: true,
+        user,
+      });
   } catch (error) {
     console.log("Error in login controller", error.message);
     next(errorHandler(500, error.message));
