@@ -4,6 +4,7 @@ import { Alert, Button, Label, Spinner, TextInput } from "flowbite-react";
 import { useState } from "react";
 import axios from "axios";
 import { toast } from "react-hot-toast";
+import OAuth from "../components/OAuth";
 
 const SignUp = () => {
   const user = {
@@ -132,6 +133,7 @@ const SignUp = () => {
                 "Sign Up"
               )}
             </Button>
+            <OAuth />
           </form>
           <div className="flex items-center text-2xl gap-1  mt-5">
             <span>Already Have an account?</span>
