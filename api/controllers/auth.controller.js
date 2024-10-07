@@ -1,5 +1,5 @@
 import User from "../models/user.model.js";
-// import bcryptjs from "bcryptjs";
+import bcryptjs from "bcryptjs";
 import { errorHandler } from "../utils/error.js";
 import jwt from "jsonwebtoken";
 
@@ -98,7 +98,8 @@ export const signin = async (req, res, next) => {
 
 export const google = async (req, res, next) => {
   const { name, email, googlePhotoUrl } = req.body;
-
+  console.log(name, "Received");
+  console.log(email, "Received");
   try {
     const user = await User.findOne({ email });
     if (user) {

@@ -10,6 +10,7 @@ import { toggleTheme } from "../redux/theme/themeSlice";
 const Header = () => {
   const path = useLocation().pathname;
   const { currentUser } = useSelector((state) => state.user);
+  console.log(currentUser);
   const { theme } = useSelector((state) => state.theme);
   const dispatch = useDispatch();
   return (
