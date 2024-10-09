@@ -11,13 +11,14 @@ import {
   uploadBytesResumable,
 } from "firebase/storage";
 import { app } from "../firebase";
+
 const DashProfile = () => {
   const { currentUser } = useSelector((state) => state.user);
   const [imageFile, setImageFile] = useState(null);
   const [imageFileUrl, setImageFileUrl] = useState(null);
   const [imageFileUploadingProgress, setImageFileUploadingProgress] =
     useState(0);
-  const [imageFileUploadingError, setImageFileUploadingError] = useState(0);
+  const [imageFileUploadingError, setImageFileUploadingError] = useState(null);
   const filePickerRef = useRef();
 
   const handleImageChange = (e) => {
@@ -82,9 +83,9 @@ const DashProfile = () => {
           className="w-32 h-32 self-center cursor-pointer shadow-md rounded-full relative"
           onClick={() => filePickerRef.current.click()}
         >
-          {imageFileUploadingProgress && (
+          {imageFileUploadingProgress > 0 && (
             <CircularProgressbar
-              value={imageFileUploadingProgress || 0}
+              value={imageFileUploadingProgress}
               text={`${imageFileUploadingProgress}%`}
               strokeWidth={5}
               styles={{
