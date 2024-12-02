@@ -20,6 +20,7 @@ import {
   deleteUserError,
   deleteUserStart,
   deleteUserSuccess,
+  signoutSuccess,
 } from "../redux/user/userSlice";
 
 const DashProfile = () => {
@@ -98,9 +99,8 @@ const DashProfile = () => {
       setUpdateUserError("No changes made");
       return;
     }
-    if (imageFileUploading) {
+    if (!imageFileUploading === true) {
       setUpdateUserError("Please wait for image to upload");
-
       return;
     }
     try {
@@ -159,6 +159,20 @@ const DashProfile = () => {
         // Something went wrong in setting up the request
         dispatch(deleteUserError(error.message));
       }
+    }
+  };
+
+  const handleSignOut = async () => {
+    try {
+      const res = await axios.post("/api/user/signout");
+      if (res.status !== 200) {
+        console.log(data.message);
+      } else {
+        dispatch(signoutSuccess());
+      }
+      const data = res.data;
+    } catch (error) {
+      console.log(error.message);
     }
   };
 
@@ -246,7 +260,12 @@ const DashProfile = () => {
         >
           Delete Account{" "}
         </span>
-        <span className="cursor-pointer hover:underline">Sign Out </span>
+        <span
+          className="cursor-pointer hover:underline"
+          onClick={handleSignOut}
+        >
+          Sign Out{" "}
+        </span>
       </div>
 
       {updateUserSuccess && (

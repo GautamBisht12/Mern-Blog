@@ -42,19 +42,26 @@ export const updateUser = async (req, res, next) => {
         errorHandler(400, "Username can only contain letters and numbers")
       );
     }
-    updateFields.username = req.body.username;
+    // updateFields.username = req.body.username;
   }
 
-  // Optionally update email and profile picture if provided
-  if (req.body.email) updateFields.email = req.body.email;
-  if (req.body.profilePicture)
-    updateFields.profilePicture = req.body.profilePicture;
+  // // Optionally update email and profile picture if provided
+  // if (req.body.email) updateFields.email = req.body.email;
+  // if (req.body.profilePicture)
+  //   updateFields.profilePicture = req.body.profilePicture;
 
   try {
     // Updating the user with validated and optional data
     const updatedUser = await User.findByIdAndUpdate(
       req.params.userId,
-      { $set: updateFields },
+      {
+        $set: {
+          username: req.body.username,
+          email: req.body.email,
+          profilePicture: req.body.profilePicture,
+          password: updateFields.password,
+        },
+      },
       { new: true } // Returns the updated document
     );
 
@@ -86,5 +93,16 @@ export const deleteUser = async (req, res, next) => {
     res.status(200).json("User has been deleted successfully");
   } catch (error) {
     next(error);
+  }
+};
+
+export const signout = async (req, res, next) => {
+  try {
+    res
+      .clearCookie("access_token")
+      .status(200)
+      .json("User has been signed out");
+  } catch (error) {
+    next(errorHandler(error));
   }
 };
